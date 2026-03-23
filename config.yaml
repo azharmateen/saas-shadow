@@ -1,0 +1,25 @@
+# saas-shadow project configuration
+project:
+  name: "My Project"
+  description: "Self-hosted project management"
+
+modules:
+  kanban: true
+  tasks: true
+  wiki: true
+
+theme:
+  default: "dark"   # "dark" or "light"
+  accent: "#58a6ff"
+
+ai:
+  enabled: false     # Set to true and add OPENAI_API_KEY to .env
+  model: "gpt-4o-mini"
+
+database:
+  path: "./saas_shadow.db"
+
+server:
+  host: "0.0.0.0"
+  port: 5678
+  debug: true

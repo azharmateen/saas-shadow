@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Kanban - {{ project_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Kanban Board</h1>
+    <div style="display:flex;gap:8px">
+        <button class="btn" onclick="showModal('ai-modal')">AI Breakdown</button>
+        <button class="btn btn-primary" onclick="showModal('card-modal')">+ New Card</button>
+    </div>
+</div>
+
+<div class="kanban-board">
+    {% for column_name, cards in board.get('columns', {}).items() %}
+    <div class="kanban-column">
+        <div class="kanban-column-header">
+            {{ column_name }}
+            <span class="kanban-column-count">{{ cards|length }}</span>
+        </div>
+        <div class="kanban-drop-zone" data-column="{{ column_name }}">
+            {% for card in cards %}
+            <div class="kanban-card" draggable="true" data-card-id="{{ card.id }}">
+                <h4>{{ card.title }}</h4>
+                {% if card.description %}<p>{{ card.description[:80] }}</p>{% endif %}
+                <div class="card-actions">
+                    <button class="btn btn-sm btn-danger" onclick="deleteCard({{ card.id }})">Delete</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- New Card Modal -->
+<div class="modal-overlay" id="card-modal">
+    <div class="modal">
+        <h2>New Card</h2>
+        <label>Title</label>
+        <input type="text" id="card-title" placeholder="Card title">
+        <label>Column</label>
+        <select id="card-column">
+            {% for col in board.get('columns', {}).keys() %}
+            <option value="{{ col }}">{{ col }}</option>
+            {% endfor %}
+        </select>
+        <label>Description</label>
+        <textarea id="card-description" placeholder="Optional description"></textarea>
+        <div class="modal-actions">
+            <button class="btn" onclick="hideModal('card-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="createCard()">Create</button>
+        </div>
+    </div>
+</div>
+
+<!-- AI Breakdown Modal -->
+<div class="modal-overlay" id="ai-modal">
+    <div class="modal" style="width:600px">
+        <h2>AI Task Breakdown</h2>
+        <p style="color:var(--text-muted);font-size:13px;margin-bottom:12px">Paste a project description and AI will break it into tasks.</p>
+        <textarea id="ai-description" style="min-height:120px" placeholder="Describe your project or feature..."></textarea>
+        <div class="modal-actions" style="margin-bottom:12px">
+            <button class="btn" onclick="hideModal('ai-modal')">Close</button>
+            <button class="btn btn-primary" id="ai-btn" onclick="aiBreakdown()">Break Down</button>
+        </div>
+        <div id="ai-results"></div>
+    </div>
+</div>
+{% endblock %}

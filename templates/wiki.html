@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Wiki - {{ project_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Wiki</h1>
+    <button class="btn btn-primary" onclick="showModal('wiki-modal')">+ New Page</button>
+</div>
+
+<div class="wiki-layout">
+    <div class="wiki-tree">
+        <h3 style="font-size:13px;color:var(--text-muted);padding:8px;text-transform:uppercase;letter-spacing:0.5px">Pages</h3>
+        {% for page in pages %}
+        <a href="/wiki/{{ page.slug }}" {% if current_page and current_page.slug == page.slug %}class="active"{% endif %}>
+            {{ page.title }}
+        </a>
+        {% else %}
+        <p style="padding:8px;color:var(--text-muted);font-size:13px">No pages yet.</p>
+        {% endfor %}
+    </div>
+
+    <div class="wiki-content">
+        {% if editing and current_page %}
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <input type="text" id="wiki-page-title" value="{{ current_page.title }}" style="font-size:20px;font-weight:bold;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;color:var(--text);flex:1;margin-right:12px">
+                <div style="display:flex;gap:8px">
+                    <button class="btn" onclick="window.location='/wiki/{{ current_page.slug }}'">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveWikiPage('{{ current_page.slug }}')">Save</button>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <div>
+                    <h3 style="font-size:12px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase">Editor</h3>
+                    <textarea id="wiki-editor" class="wiki-editor">{{ current_page.content }}</textarea>
+                </div>
+                <div>
+                    <h3 style="font-size:12px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase">Preview</h3>
+                    <div id="wiki-preview" class="wiki-preview"></div>
+                </div>
+            </div>
+        {% elif current_page %}
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <h1>{{ current_page.title }}</h1>
+                <div style="display:flex;gap:8px">
+                    <button class="btn" onclick="window.location='/wiki/{{ current_page.slug }}/edit'">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteWikiPage('{{ current_page.slug }}')">Delete</button>
+                </div>
+            </div>
+            {{ content_html | safe }}
+        {% else %}
+            <div style="text-align:center;padding:60px 20px;color:var(--text-muted)">
+                <h2 style="margin-bottom:8px">Welcome to the Wiki</h2>
+                <p>Select a page from the sidebar or create a new one.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- New Wiki Page Modal -->
+<div class="modal-overlay" id="wiki-modal">
+    <div class="modal">
+        <h2>New Wiki Page</h2>
+        <label>Page Title</label>
+        <input type="text" id="wiki-title" placeholder="Page title">
+        <div class="modal-actions">
+            <button class="btn" onclick="hideModal('wiki-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="createWikiPage()">Create</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

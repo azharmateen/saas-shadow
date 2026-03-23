@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme_default }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ project_name }}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/app.css">
+    <style>:root { --accent: {{ accent_color }}; --accent-hover: {{ accent_color }}cc; }</style>
+</head>
+<body data-default-theme="{{ theme_default }}">
+    <aside class="sidebar">
+        <div class="sidebar-brand"><span>saas</span>shadow</div>
+        <nav class="sidebar-nav">
+            {% if modules_enabled.get('kanban', True) %}
+            <a href="/kanban" class="{% if request.path.startswith('/kanban') %}active{% endif %}">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="4" height="14" rx="1"/><rect x="6" y="1" width="4" height="10" rx="1"/><rect x="11" y="1" width="4" height="7" rx="1"/></svg>
+                Kanban
+            </a>
+            {% endif %}
+            {% if modules_enabled.get('tasks', True) %}
+            <a href="/tasks" class="{% if request.path.startswith('/tasks') %}active{% endif %}">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zM2 7h12v2H2zM2 11h8v2H2z"/></svg>
+                Tasks
+            </a>
+            {% endif %}
+            {% if modules_enabled.get('wiki', True) %}
+            <a href="/wiki" class="{% if request.path.startswith('/wiki') %}active{% endif %}">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M3 1h10a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V3a2 2 0 012-2zm1 3v2h8V4H4zm0 4v2h6V8H4z"/></svg>
+                Wiki
+            </a>
+            {% endif %}
+        </nav>
+        <div class="sidebar-footer">
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="/static/app.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

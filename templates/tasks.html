@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Tasks - {{ project_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Tasks</h1>
+    <button class="btn btn-primary" onclick="showModal('task-modal')">+ New Task</button>
+</div>
+
+<div class="task-filters">
+    <select onchange="filterTasks('status', this.value)">
+        <option value="">All Status</option>
+        <option value="open">Open</option>
+        <option value="in_progress">In Progress</option>
+        <option value="review">Review</option>
+        <option value="done">Done</option>
+    </select>
+    <select onchange="filterTasks('priority', this.value)">
+        <option value="">All Priority</option>
+        <option value="urgent">Urgent</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+    </select>
+</div>
+
+<div class="task-list">
+    {% for task in tasks %}
+    <div class="task-item">
+        <div>
+            <h3>{{ task.title }}</h3>
+            <div class="task-meta">
+                {% if task.assignee %}{{ task.assignee }} &middot; {% endif %}
+                {% if task.due_date %}Due: {{ task.due_date }} &middot; {% endif %}
+                {% for tag in task.tags %}<span style="color:var(--purple)">#{{ tag }}</span> {% endfor %}
+            </div>
+        </div>
+        <span class="priority-badge priority-{{ task.priority }}">{{ task.priority }}</span>
+        <select class="btn btn-sm" onchange="updateTaskStatus({{ task.id }}, this.value)" style="font-size:12px">
+            <option value="open" {% if task.status == 'open' %}selected{% endif %}>Open</option>
+            <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+            <option value="review" {% if task.status == 'review' %}selected{% endif %}>Review</option>
+            <option value="done" {% if task.status == 'done' %}selected{% endif %}>Done</option>
+        </select>
+        <button class="btn btn-sm btn-danger" onclick="deleteTask({{ task.id }})">Delete</button>
+    </div>
+    {% else %}
+    <div class="card" style="text-align:center;color:var(--text-muted)">No tasks yet. Create one to get started.</div>
+    {% endfor %}
+</div>
+
+<!-- New Task Modal -->
+<div class="modal-overlay" id="task-modal">
+    <div class="modal">
+        <h2>New Task</h2>
+        <label>Title</label>
+        <input type="text" id="task-title" placeholder="Task title">
+        <label>Description</label>
+        <textarea id="task-description" placeholder="Describe the task"></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+                <label>Assignee</label>
+                <input type="text" id="task-assignee" placeholder="Name">
+            </div>
+            <div>
+                <label>Due Date</label>
+                <input type="date" id="task-due-date">
+            </div>
+        </div>
+        <label>Priority</label>
+        <select id="task-priority">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+        </select>
+        <div class="modal-actions">
+            <button class="btn" onclick="hideModal('task-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="createTask()">Create</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterTasks(key, value) {
+    const params = new URLSearchParams(window.location.search);
+    if (value) params.set(key, value); else params.delete(key);
+    window.location.search = params.toString();
+}
+</script>
+{% endblock %}
