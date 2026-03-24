@@ -1,5 +1,8 @@
 # saas-shadow
 
+[![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-blue?logo=anthropic&logoColor=white)](https://claude.ai/code)
+
+
 **Self-host your own project management stack from a single config file.**
 
 Kanban board, task tracker, and wiki -- all in one Flask app with SQLite storage, dark/light themes, drag-and-drop, and optional AI task breakdown. Zero external dependencies beyond Python.
